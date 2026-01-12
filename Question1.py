@@ -1,52 +1,52 @@
 from collections import defaultdict
 from math import gcd
 
-def max_customers_on_line(customer_locations):
-    if len(customer_locations) <= 2:
-        return len(customer_locations)
 
-    max_points = 0
+def find_max_collinear_points(locations):
+    if len(locations) <= 2:
+        return len(locations)
 
-    for i in range(len(customer_locations)):
-        slopes = defaultdict(int)
-        same_point = 1
-        x1, y1 = customer_locations[i]
+    maximum_count = 0
 
-        for j in range(i + 1, len(customer_locations)):
-            x2, y2 = customer_locations[j]
-            dx = x2 - x1
-            dy = y2 - y1
+    for index in range(len(locations)):
+        slope_map = defaultdict(int)
+        duplicate_points = 1
+        base_x, base_y = locations[index]
 
-            if dx == 0 and dy == 0:
-                same_point += 1
+        for next_index in range(index + 1, len(locations)):
+            current_x, current_y = locations[next_index]
+            delta_x = current_x - base_x
+            delta_y = current_y - base_y
+
+            if delta_x == 0 and delta_y == 0:
+                duplicate_points += 1
                 continue
 
-            g = gcd(dx, dy)
-            dx //= g
-            dy //= g
+            divisor = gcd(delta_x, delta_y)
+            delta_x //= divisor
+            delta_y //= divisor
 
-            slopes[(dy, dx)] += 1
+            slope_map[(delta_y, delta_x)] += 1
 
-        current_max = same_point
-        for count in slopes.values():
-            current_max = max(current_max, count + same_point)
+        local_max = duplicate_points
+        for value in slope_map.values():
+            local_max = max(local_max, value + duplicate_points)
 
-        max_points = max(max_points, current_max)
+        maximum_count = max(maximum_count, local_max)
 
-    return max_points
-
+    return maximum_count
 
 
 def main():
     # Example 1
     customer_locations1 = [[1, 1], [2, 2], [3, 3]]
-    result1 = max_customers_on_line(customer_locations1)
-    print("Max number of customers covered 2:", result1)
+    output1 = find_max_collinear_points(customer_locations1)
+    print("Max number of customers covered 2:", output1)
 
     # Example 2
-    customer_locations2 = [[1,4], [2,3], [3,2], [4,1], [5,3]]
-    result2 = max_customers_on_line(customer_locations2)
-    print("Max number of customers covered 2:", result2)
+    customer_locations2 = [[1, 4], [2, 3], [3, 2], [4, 1], [5, 3]]
+    output2 = find_max_collinear_points(customer_locations2)
+    print("Max number of customers covered 2:", output2)
 
 
 if __name__ == "__main__":
